@@ -43,4 +43,4 @@ COPY config/yarn-site.xml /usr/local/hadoop/etc/hadoop/
 #RUN echo "Y" | hdfs namenode -format
 
 # Start the Namenode and Datanode
-CMD ["/bin/bash"]
+CMD bash
