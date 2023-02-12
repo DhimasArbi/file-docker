@@ -13,6 +13,10 @@ RUN echo "Asia/Jakarta" > /etc/timezone
 RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 RUN dpkg-reconfigure -f noninteractive tzdata
 
+# Add a new user and change to new user
+RUN adduser --disabled-password --gecos '' hadoopuser
+USER hadoopuser
+
 # Download and extract Hadoop
 RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
     tar -xzvf hadoop-3.3.4.tar.gz && \
@@ -27,14 +31,6 @@ ENV PATH $PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin
 # RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
 
 # RUN sed -i '1d' /etc/environment
-
-# Add a new user and change the ownership of Hadoop directories to the new user
-RUN RUN useradd -m -p "$(openssl passwd -1 1234)" -s /bin/bash hadoopuser && \
-    usermod -aG sudo hadoopuser && \
-    chown -R hadoopuser:root /usr/local/hadoop
-
-# Switch to the new user
-USER hadoopuser
 
 VOLUME /data
 
