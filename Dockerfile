@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 
 # Update the package repository and install Java
 
-RUN apt-get update && apt-get upgrade -y &&\
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get upgrade -y &&\
     apt-get install -y locales tar tzdata net-tools apt-utils openjdk-8-jdk git nano wget curl && \
     apt-get clean && \
     apt-get autoremove && \
