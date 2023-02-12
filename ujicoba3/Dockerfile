@@ -1,9 +1,10 @@
 # Use the Ubuntu base image
-FROM ubuntu:20.04 as initial
+FROM debian:10 as initial
 
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo && \
+RUN apt-get update && apt-get upgrade && \
+    apt-get install -y openjdk-8-jre nano wget sudo && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/*
 
@@ -13,9 +14,11 @@ COPY hadoop-3.3.4.tar.gz /data/
 RUN cd /data && tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop
 
-FROM ubuntu:20.04
+FROM debian:10
 COPY --from=initial /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/java-8-openjdk-amd64
 COPY --from=initial  /usr/local/hadoop /usr/local/hadoop
+COPY --from=initial /usr/bin/nano /usr/bin/nano
+COPY --from=initial /usr/bin/sudo /usr/bin/sudo
 
 # Set the environment variables for Hadoop
 ENV HADOOP_HOME /usr/local/hadoop
