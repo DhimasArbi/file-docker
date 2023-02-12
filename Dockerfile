@@ -5,9 +5,7 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get upgrade -y &&\
     apt-get install -y locales tar tzdata net-tools apt-utils openjdk-8-jdk git nano wget curl && \
-    apt-get clean && \
-    apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get autoremove
 
 RUN echo "Asia/Jakarta" > /etc/timezone
 RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
@@ -18,10 +16,9 @@ RUN adduser --disabled-password --gecos '' hadoopuser
 USER hadoopuser
 
 # Download and extract Hadoop
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
-    tar -xzvf hadoop-3.3.4.tar.gz && \
-    mv hadoop-3.3.4 /usr/local/hadoop && \
-    rm hadoop-3.3.4.tar.gz
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
+RUN    tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz
+RUN    mv hadoop-3.3.4 /usr/local/hadoop
 
 # Add Hadoop bin directory to PATH
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre
