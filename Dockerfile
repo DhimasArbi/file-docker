@@ -2,15 +2,16 @@
 FROM ubuntu:20.04
 
 # Update the package repository and install Java
-RUN echo "Asia/Jakarta" > /etc/timezone
-RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-RUN dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get update && apt-get upgrade -y &&\
-    apt-get install -y locales tar net-tools apt-utils openjdk-8-jdk git nano wget curl && \
+    apt-get install -y locales tar tzdata net-tools apt-utils openjdk-8-jdk git nano wget curl && \
     apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/*
+
+RUN echo "Asia/Jakarta" > /etc/timezone
+RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+RUN dpkg-reconfigure -f noninteractive tzdata
 
 # Download and extract Hadoop
 RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
