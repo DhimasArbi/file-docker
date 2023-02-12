@@ -19,14 +19,12 @@ COPY hadoop-3.3.4.tar.gz /data/
 RUN cd /data && tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop
 
-# Add Hadoop bin directory to PATH
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre"
-ENV PATH="$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin"
+# Set the environment variables for Hadoop
+ENV HADOOP_HOME /usr/local/hadoop
+RUN echo "PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin" >> /etc/environment
+RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
+RUN sed -i '1d' /etc/environment
 
-# RUN echo PATH="$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin" >> /etc/environment
-# RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
-
-# RUN sed -i '1d' /etc/environment
 # Add a new user and change to new user
 RUN useradd -m hadoopuser && echo "hadoopuser:hadoopuser" | chpasswd && adduser hadoopuser sudo
 RUN usermod -aG sudo hadoopuser && chown hadoopuser:root -R /usr/local/hadoop/
