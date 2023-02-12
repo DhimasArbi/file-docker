@@ -34,7 +34,7 @@ COPY config/mapred-site.xml $HADOOP_HOME/etc/hadoop/
 COPY config/yarn-site.xml $HADOOP_HOME/etc/hadoop/
 
 # Format the Namenode
-RUN echo "Y" | hdfs namenode -format
+#RUN echo "Y" | hdfs namenode -format
 
 # Start the Namenode and Datanode
 CMD ["/bin/bash"]
