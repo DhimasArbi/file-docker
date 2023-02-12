@@ -30,7 +30,8 @@ ENV PATH $PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin
 
 # Add a new user and change the ownership of Hadoop directories to the new user
 RUN RUN useradd -m -p "$(openssl passwd -1 1234)" -s /bin/bash hadoopuser && \
-    usermod -aG sudo hadoopuser
+    usermod -aG sudo hadoopuser && \
+    chown -R hadoopuser:root /usr/local/hadoop
 
 # Switch to the new user
 USER hadoopuser
