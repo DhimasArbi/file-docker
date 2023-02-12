@@ -11,9 +11,12 @@ RUN echo "Asia/Jakarta" > /etc/timezone
 RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 RUN dpkg-reconfigure -f noninteractive tzdata
 
+VOLUME /data
+
 # Download and extract Hadoop
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz -P /temp && cd /temp &&\
-    tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
+# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
+COPY hadoop-3.3.4.tar.gz -P /data/
+RUN cd /data && tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop
 
 # Add Hadoop bin directory to PATH
@@ -28,8 +31,6 @@ ENV PATH="$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin"
 RUN useradd -m hadoopuser && echo "hadoopuser:hadoopuser" | chpasswd && adduser hadoopuser sudo
 RUN usermod -aG sudo hadoopuser && chown hadoopuser:root -R /usr/local/hadoop/
 USER hadoopuser
-
-VOLUME /data
 
 # Copy the configuration files
 COPY config/hadoop-env.sh /usr/local/hadoop/etc/hadoop/
