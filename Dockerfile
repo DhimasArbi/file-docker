@@ -4,7 +4,7 @@ FROM ubuntu:20.04
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get upgrade -y &&\
-    apt-get install -y locales tar tzdata net-tools apt-utils openjdk-8-jdk git nano wget curl && \
+    apt-get install -y locales tar tzdata net-tools apt-utils openjdk-8-jdk git nano wget curl sudo && \
     apt-get autoremove
 
 RUN echo "Asia/Jakarta" > /etc/timezone
@@ -12,15 +12,14 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 RUN dpkg-reconfigure -f noninteractive tzdata
 
 # Add a new user and change to new user
-RUN adduser --disabled-password --gecos '' hadoopuser
+RUN useradd -m hadoopuser && echo "hadoopuser:hadoopuser" | chpasswd && adduser hadoopuser sudo
 RUN usermod -aG sudo hadoopuser
-RUN adduser hadoopuser sudo
 USER hadoopuser
 
 # Download and extract Hadoop
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
-RUN    tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz
-RUN    mv hadoop-3.3.4 /usr/local/hadoop
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz &&\
+    tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
+    mv hadoop-3.3.4 /usr/local/hadoop
 
 # Add Hadoop bin directory to PATH
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre
