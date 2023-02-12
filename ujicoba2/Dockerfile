@@ -5,7 +5,7 @@ FROM alpine:3.12 as build
 RUN apk add openjdk8-jre
 
 # Download and extract Hadoop
-RUN wget http://mirror.cogentco.com/pub/apache/hadoop/common/hadoop-3.3.0/hadoop-3.3.0.tar.gz
+COPY hadoop-3.3.4.tar.gz .
 RUN tar xvf hadoop-3.3.0.tar.gz
 
 # Use Ubuntu as the base image for running Hadoop
