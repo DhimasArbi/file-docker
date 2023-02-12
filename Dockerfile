@@ -15,7 +15,7 @@ VOLUME /data
 
 # Download and extract Hadoop
 # RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
-COPY hadoop-3.3.4.tar.gz -P /data/
+COPY hadoop-3.3.4.tar.gz /data/
 RUN cd /data && tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop
 
