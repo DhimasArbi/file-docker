@@ -19,12 +19,6 @@ RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
     mv hadoop-3.3.4 /usr/local/hadoop && \
     rm hadoop-3.3.4.tar.gz
 
-# Make new User
-RUN useradd -m -p 1121 hadoopuser
-RUN usermod -aG hadoopuser hadoopuser
-RUN chown hadoopuser:root -R /usr/local/hadoop/
-RUN adduser hadoopuser sudo
-
 # Set HADOOP_HOME environment variable
 ENV HADOOP_HOME /usr/local/hadoop
 
