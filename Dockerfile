@@ -29,13 +29,13 @@ ENV PATH $PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin
 # RUN sed -i '1d' /etc/environment
 
 # Add a new user and change the ownership of Hadoop directories to the new user
-RUN useradd -m hadoopuser && \
-    echo "hadoopuser:1121" | chpasswd && \
-    usermod -aG sudo hadoopuser && \
-    chown -R hadoopuser:root /usr/local/hadoop
+RUN RUN useradd -m -p "$(openssl passwd -1 1234)" -s /bin/bash hadoopuser && \
+    usermod -aG sudo hadoopuser
 
 # Switch to the new user
 USER hadoopuser
+
+VOLUME /data
 
 # Copy the configuration files
 COPY config/hadoop-env.sh /usr/local/hadoop/etc/hadoop/
