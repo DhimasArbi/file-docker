@@ -4,12 +4,8 @@ FROM ubuntu:20.04
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get upgrade -y &&\
-    apt-get install -y locales tar tzdata net-tools apt-utils openjdk-8-jdk git nano wget curl sudo && \
+    apt-get install -y openjdk-8-jdk nano wget sudo && \
     apt-get autoremove
-
-RUN echo "Asia/Jakarta" > /etc/timezone
-RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-RUN dpkg-reconfigure -f noninteractive tzdata
 
 VOLUME /data
 
