@@ -19,19 +19,18 @@ RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
     mv hadoop-3.3.4 /usr/local/hadoop && \
     rm hadoop-3.3.4.tar.gz
 
-# Set HADOOP_HOME environment variable
-ENV HADOOP_HOME /usr/local/hadoop
-
 # Add Hadoop bin directory to PATH
-RUN echo "PATH=$PATH:/usr/local/hadoop/sbin" >> /etc/environment
-RUN echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
+RUN echo PATH="$PATH:/usr/local/hadoop/sbin" >> /etc/environment
+RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
+
+RUN sed -i '1d' /etc/environment
 
 # Copy the configuration files
 COPY config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/
-COPY config/core-site.xml $HADOOP_HOME/etc/hadoop/
-COPY config/hdfs-site.xml $HADOOP_HOME/etc/hadoop/
-COPY config/mapred-site.xml $HADOOP_HOME/etc/hadoop/
-COPY config/yarn-site.xml $HADOOP_HOME/etc/hadoop/
+# COPY config/core-site.xml $HADOOP_HOME/etc/hadoop/
+# COPY config/hdfs-site.xml $HADOOP_HOME/etc/hadoop/
+# COPY config/mapred-site.xml $HADOOP_HOME/etc/hadoop/
+# COPY config/yarn-site.xml $HADOOP_HOME/etc/hadoop/
 
 # Format the Namenode
 #RUN echo "Y" | hdfs namenode -format
