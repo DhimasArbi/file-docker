@@ -14,6 +14,8 @@ RUN dpkg-reconfigure -f noninteractive tzdata
 # Add a new user and change to new user
 RUN adduser --disabled-password --gecos '' hadoopuser
 USER hadoopuser
+RUN usermod -aG sudo hadoopuser
+RUN adduser hadoopuser sudo
 
 # Download and extract Hadoop
 RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
