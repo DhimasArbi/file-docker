@@ -1,18 +1,21 @@
 # Use the Ubuntu base image
-FROM ubuntu:20.04
+FROM ubuntu:20.04 as initial
 
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo && \
-    apt-get autoremove
-
-VOLUME /data
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/*
 
 # Download and extract Hadoop
 # RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
 COPY hadoop-3.3.4.tar.gz /data/
 RUN cd /data && tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop
+
+FROM ubuntu:20.04
+COPY --from=initial /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/java-8-openjdk-amd64
+COPY --from=initial  /usr/local/hadoop /usr/local/hadoop
 
 # Set the environment variables for Hadoop
 ENV HADOOP_HOME /usr/local/hadoop
@@ -26,7 +29,8 @@ RUN usermod -aG sudo hadoopuser && chown hadoopuser:root -R /usr/local/hadoop/
 USER hadoopuser
 
 # Copy the configuration files
-COPY config/hadoop-env.sh /usr/local/hadoop/etc/hadoop/
+RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" >> /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+# COPY config/hadoop-env.sh /usr/local/hadoop/etc/hadoop/
 COPY config/core-site.xml /usr/local/hadoop/etc/hadoop/
 COPY config/hdfs-site.xml /usr/local/hadoop/etc/hadoop/
 COPY config/mapred-site.xml /usr/local/hadoop/etc/hadoop/

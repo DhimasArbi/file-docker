@@ -1,9 +1,7 @@
-# Use the Ubuntu base image
-FROM ubuntu:20.04
-
+FROM openjdk:8-jre-slim-buster
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo && \
+RUN apt-get update && apt-get install -y nano wget sudo && \
     apt-get autoremove
 
 VOLUME /data
