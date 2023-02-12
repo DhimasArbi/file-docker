@@ -15,22 +15,34 @@ RUN dpkg-reconfigure -f noninteractive tzdata
 
 # Download and extract Hadoop
 RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
-    tar -xzf hadoop-3.3.4.tar.gz && \
+    tar -xzvf hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop && \
     rm hadoop-3.3.4.tar.gz
 
 # Add Hadoop bin directory to PATH
-RUN echo PATH="$PATH:/usr/local/hadoop/sbin" >> /etc/environment
-RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre
+ENV PATH $PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin
 
-RUN sed -i '1d' /etc/environment
+# RUN echo PATH="$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin" >> /etc/environment
+# RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
+
+# RUN sed -i '1d' /etc/environment
+
+# Add a new user and change the ownership of Hadoop directories to the new user
+RUN useradd -m hadoopuser && \
+    echo "hadoopuser:1121" | chpasswd && \
+    usermod -aG sudo hadoopuser && \
+    chown -R hadoopuser:root /usr/local/hadoop
+
+# Switch to the new user
+USER hadoopuser
 
 # Copy the configuration files
-COPY config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/
-# COPY config/core-site.xml $HADOOP_HOME/etc/hadoop/
-# COPY config/hdfs-site.xml $HADOOP_HOME/etc/hadoop/
-# COPY config/mapred-site.xml $HADOOP_HOME/etc/hadoop/
-# COPY config/yarn-site.xml $HADOOP_HOME/etc/hadoop/
+COPY config/hadoop-env.sh /usr/local/hadoop/etc/hadoop/
+COPY config/core-site.xml /usr/local/hadoop/etc/hadoop/
+COPY config/hdfs-site.xml /usr/local/hadoop/etc/hadoop/
+COPY config/mapred-site.xml /usr/local/hadoop/etc/hadoop/
+COPY config/yarn-site.xml /usr/local/hadoop/etc/hadoop/
 
 # Format the Namenode
 #RUN echo "Y" | hdfs namenode -format
