@@ -6,8 +6,6 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo && \
     apt-get autoremove
 
-VOLUME /data
-
 # Download and extract Hadoop
 # RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
 COPY hadoop-3.3.4.tar.gz /data/
@@ -21,9 +19,9 @@ RUN echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" >> /etc/environment
 RUN sed -i '1d' /etc/environment
 
 # Add a new user and change to new user
-RUN useradd -m hadoopuser && echo "hadoopuser:hadoopuser" | chpasswd && adduser hadoopuser sudo
-RUN usermod -aG sudo hadoopuser && chown hadoopuser:root -R /usr/local/hadoop/
-USER hadoopuser
+# RUN useradd -m hadoopuser && echo "hadoopuser:hadoopuser" | chpasswd && adduser hadoopuser sudo
+# RUN usermod -aG sudo hadoopuser && chown hadoopuser:root -R /usr/local/hadoop/
+# USER hadoopuser
 
 # Copy the configuration files
 COPY config/hadoop-env.sh /usr/local/hadoop/etc/hadoop/
