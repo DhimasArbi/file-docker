@@ -24,17 +24,15 @@ COPY --from=initial /hadoop /usr/local/hadoop
 
 # Set the environment variables for Hadoop
 ENV HADOOP_HOME /usr/local/hadoop
-ENV PATH "$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin"
-ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk/jre"
-ENV PATH $PATH:$JAVA_HOME/bin
-
-ENV HADOOP_PREFIX $HADOOP_HOME
 ENV HADOOP_COMMON_HOME $HADOOP_HOME
 ENV HADOOP_HDFS_HOME $HADOOP_HOME
 ENV HADOOP_MAPRED_HOME $HADOOP_HOME
 ENV HADOOP_YARN_HOME $HADOOP_HOME
 ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
-ENV YARN_CONF_DIR $HADOOP_PREFIX/etc/hadoop
+
+ENV PATH "$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin"
+ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk/jre"
+ENV PATH $PATH:$JAVA_HOME/bin
 ENV PS1='\u@\h:\W $ '
 
 # Start the Namenode and Datanode
