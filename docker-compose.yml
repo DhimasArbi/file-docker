@@ -13,7 +13,7 @@ services:
       - "9870:9870"
       - "9868:9868"
       - "50070:50070"
-      - "8088"
+      - "8088:8080"
     volumes:
       - /hadoop-conf:/usr/local/hadoop/etc/hadoop
       - /hadoop/namenode_data:/data
@@ -32,7 +32,6 @@ services:
       dockerfile: Dockerfile
     container_name: datanode
     ports:
-      - "9868:9868"
       - "9867:9867"
       - "9866:9866"
       - "9865:9865"
