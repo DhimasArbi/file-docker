@@ -1,9 +1,7 @@
 version: "3"
 services:
   namenode:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: namenode
     environment:
       - HADOOP_HOSTNAME=namenode
@@ -14,9 +12,9 @@ services:
       - "50070:50070"
       - "8088"
     volumes:
-      - ./hadoop-conf:/usr/local/hadoop/etc/hadoop
-      - namenode_data:/data
-      - user_data:/user_data
+      - /hadoop-conf:/usr/local/hadoop/etc/hadoop
+      - /hadoop/namenode_data:/data
+      - /hadoop/user_data:/user_data
     networks:
       - hadoop-net
     deploy:
@@ -25,9 +23,7 @@ services:
         constraints: [node.hostname == namenode]
 
   datanode:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: datanode
     ports:
       - "9868:9868"
@@ -37,20 +33,14 @@ services:
       - "9864:9864"
       - "50075:50075"
     volumes:
-      - ./hadoop-conf:/usr/local/hadoop/etc/hadoop
-      - datanode_data:/data
+      - /hadoop-conf:/usr/local/hadoop/etc/hadoop
+      - /hadoop/datanode_data:/data
     networks:
       - hadoop-net
     deploy:
       replicas: 1
       placement:
         constraints: [node.hostname != namenode]
-
-volumes:
-  namenode_data:
-    - driver: local
-  datanode_data:
-    - driver: local
 
 networks:
   hadoop-net:
