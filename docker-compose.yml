@@ -44,5 +44,5 @@ services:
 
 networks:
   hadoop-net:
-    - driver: overlay
-    - attachable: true
+    driver: overlay
+    attachable: true
