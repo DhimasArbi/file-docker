@@ -1,11 +1,7 @@
 version: "3"
 services:
   namenode:
-    image: hadoop
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: namenode
+    image: dhimasarbi/hadoop:3.3.4
     environment:
       - HADOOP_HOSTNAME=namenode
     ports:
@@ -26,11 +22,7 @@ services:
         constraints: [node.hostname == namenode]
 
   datanode:
-    image: hadoop
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: datanode
+    image: dhimasarbi/hadoop:3.3.4
     ports:
       - "9867:9867"
       - "9866:9866"
