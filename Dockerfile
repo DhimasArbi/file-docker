@@ -15,7 +15,7 @@ COPY config/mapred-site.xml /usr/local/hadoop/etc/hadoop/
 COPY config/yarn-site.xml /usr/local/hadoop/etc/hadoop/
 COPY config/workers /usr/local/hadoop/etc/hadoop/
 
-FROM ubuntu:20.04
+FROM ubuntu:20.04 as finish
 
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
