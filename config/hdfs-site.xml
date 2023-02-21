@@ -4,13 +4,15 @@
 
 <configuration>
 <property>
-<name>dfs.namenode.name.dir</name><value>/usr/local/hadoop/data/nameNode</value>
+    <name>dfs.namenode.name.dir</name>
+    <value>/home/hadoop/data/dataNode</value>
 </property>
 <property>
-<name>dfs.datanode.data.dir</name><value>/usr/local/hadoop/data/dataNode</value>
+    <name>dfs.datanode.data.dir</name>
+    <value>/home/hadoop/data/dataNode</value>
 </property>
 <property>
-<name>dfs.replication</name>
-<value>3</value>
+    <name>dfs.replication</name>
+    <value>1</value>
 </property> 
 </configuration>
