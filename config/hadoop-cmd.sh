@@ -1,5 +1,5 @@
 #!/bin/bash
-service ssh start
+# service ssh start
 
 echo "Starting HDFS and Yarn"
 $HADOOP_HOME/sbin/start-dfs.sh

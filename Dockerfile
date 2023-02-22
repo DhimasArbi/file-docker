@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools 
     # ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
     # cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
     # echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
-    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh && 
+    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh 
     # service ssh restart
 
 # Adds some needed environment variables
