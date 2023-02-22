@@ -31,7 +31,7 @@ services:
       - hdfs-master-data:/home/hadoop/data/nameNode
       - /hadoop-conf:/usr/local/hadoop/etc/hadoop
       - /hadoop/namenode_data:/data
-      - /hadoop/user_data:/user_data
+      - /hadoop/user_data:/home/user
     networks:
       - cluster_network
     deploy:
