@@ -52,8 +52,6 @@ ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk/jre"
 ENV PATH $PATH:$JAVA_HOME/bin
 ENV PS1='\u@\h:\W $ '
 
-
-
 WORKDIR /home/hadoop
 COPY ./config/hadoop-cmd.sh .
 RUN chmod +x /home/hadoop/hadoop-cmd.sh
