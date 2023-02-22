@@ -33,7 +33,7 @@ services:
       - /hadoop/namenode_data:/data
       - /hadoop/user_data:/user_data
     networks:
-      - cluster-net
+      - cluster_network
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -47,17 +47,28 @@ services:
     depends_on:
       - "namenode"
     ports:
-      - "9867:9867"
-      - "9866:9866"
-      - "9865:9865"
-      - "9864:9864"
-      - "50075:50075"
+      - target: 9867
+        published: 9867
+        protocol: tcp
+        mode: host
+      - target: 9866
+        published: 9866
+        protocol: tcp
+        mode: host
+      - target: 9865
+        published: 9865
+        protocol: tcp
+        mode: host
+      - target: 9864
+        published: 9864
+        protocol: tcp
+        mode: host
     volumes:
       - hdfs-worker-data:/home/hadoop/data/dataNode
       - /hadoop-conf:/usr/local/hadoop/etc/hadoop
       - /hadoop/datanode_data:/data
     networks:
-      - cluster-net
+      - cluster_network
     deploy:
       replicas: 2
       placement:
@@ -65,18 +76,13 @@ services:
 
 volumes:
   hdfs-master-data:
-    external: true
     name: "hdsf_master_data_swarm"
   hdfs-master-checkpoint-data:
-    external: true
     name: "hdsf_master_checkpoint_data_swarm"
   hdfs-worker-data:
-    external: true
     name: "hdsf_worker_data_swarm"
 
 networks:
-  cluster-net:
+  cluster_network:
     driver: overlay
     attachable: true
-    external: true
-    name: cluster_net_swarm

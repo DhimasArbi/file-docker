@@ -13,6 +13,7 @@ COPY ./config/core-site.xml .
 COPY ./config/hdfs-site.xml .
 COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
+COPY ./config/log4j.properties .
 
 FROM ubuntu:20.04 as finish
 
@@ -30,12 +31,12 @@ SHELL ["/bin/bash", "-c"]
 
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping ssh openssh-server openssh-client && \
-    echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
-    echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
-    ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
-    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
-    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
+RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping && \
+    # echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
+    # echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
+    # ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
+    # cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
+    # echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
     echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
     service ssh restart
 
@@ -47,7 +48,7 @@ ENV YARN_RESOURCEMANAGER_USER "root"
 ENV YARN_NODEMANAGER_USER "root"
 
 ENV PATH "$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin"
-ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk/jre"
+ENV JAVA_HOME $(readlink -f /usr/bin/java | sed "s:bin/java::")
 ENV PATH $PATH:$JAVA_HOME/bin
 ENV PS1='\u@\h:\W $ '
 
@@ -55,5 +56,7 @@ WORKDIR /home/hadoop
 COPY ./config/hadoop-cmd.sh .
 RUN chmod +x /home/hadoop/hadoop-cmd.sh
 
+WORKDIR /home/user
+
 # Start the Namenode and Datanode
-CMD service ssh start && sleep infinity
+# CMD service ssh start && sleep infinity
