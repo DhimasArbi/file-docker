@@ -34,7 +34,6 @@ COPY ./config/core-site.xml .
 COPY ./config/hdfs-site.xml .
 COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
-COPY ./config/log4j.properties .
 
 # Adds some needed environment variables
 ENV HDFS_NAMENODE_USER "root"
@@ -55,4 +54,4 @@ RUN chmod +x /home/hadoop/hadoop-cmd.sh
 WORKDIR /home/user
 
 # Start the Namenode and Datanode
-CMD service ssh start && sleep infinity
+#CMD service ssh start && sleep infinity
