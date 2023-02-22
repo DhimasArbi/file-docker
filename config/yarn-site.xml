@@ -16,8 +16,12 @@
 
 <!-- Site specific YARN configuration properties -->
 <property>
-<name>yarn.resourcemaganer.hostname</name>
-<value>namenode</value>
+  <name>yarn.resourcemaganer.hostname</name>
+  <value>namenode</value>
+</property>
+<property>
+  <name>yarn.nodemanager.bind-host</name>
+  <value>namenode</value>
 </property>
 
 </configuration>
