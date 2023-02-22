@@ -7,10 +7,7 @@ services:
     environment:
       - HADOOP_HOSTNAME=namenode
     ports:
-      - target: 9870
-        published: 9870
-        protocol: tcp
-        mode: host
+      - "9870:9870"
       - "9000:9000"
       - "9868:9868"
       - "50070:50070"
