@@ -3,7 +3,7 @@ services:
   namenode:
     image: dhimasarbi/hadoop:3.3.4
     command: bash -c "/home/hadoop/hadoop-cmd.sh start namenode"
-    container_name: namenode
+    hostname: namenode
     ports:
       - target: 9870
         published: 9870

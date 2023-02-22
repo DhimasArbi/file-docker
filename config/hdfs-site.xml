@@ -15,8 +15,4 @@
     <name>dfs.replication</name>
     <value>3</value>
 </property> 
-<property>
-  <name>dfs.namenode.rpc-bind-host</name>
-  <value>namenode</value>
-</property>
 </configuration>

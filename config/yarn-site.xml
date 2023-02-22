@@ -19,9 +19,4 @@
   <name>yarn.resourcemaganer.hostname</name>
   <value>namenode</value>
 </property>
-<property>
-  <name>yarn.nodemanager.bind-host</name>
-  <value>namenode</value>
-</property>
-
 </configuration>
