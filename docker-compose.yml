@@ -30,7 +30,7 @@ services:
       - /hadoop/namenode_data:/data
       - /hadoop/user_data:/home/user
     networks:
-      - network
+      - net
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -63,7 +63,7 @@ services:
       - hdfs-worker-data:/home/hadoop/data/dataNode
       - /hadoop/datanode_data:/data
     networks:
-      - network
+      - net
     deploy:
       replicas: 2
       placement:
@@ -78,6 +78,6 @@ volumes:
     name: "hdsf_worker_data_swarm"
 
 networks:
-  network:
+  net:
     driver: overlay
     attachable: true
