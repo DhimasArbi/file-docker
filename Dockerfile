@@ -13,7 +13,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping ssh\
+RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping ssh &&\
     echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
     echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
     ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
