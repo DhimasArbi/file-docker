@@ -5,8 +5,7 @@ FROM ubuntu:20.04 as initial
 # RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
 COPY hadoop-3.3.4.tar.gz .
 RUN tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
-    mv hadoop-3.3.4 /usr/local/hadoop && \
-    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+    mv hadoop-3.3.4 /usr/local/hadoop
 
 # Copy the configuration files
 WORKDIR /usr/local/hadoop/etc/hadoop
@@ -37,8 +36,8 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools 
     ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
     cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
     echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
+    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
     service ssh restart
-
 
 # Adds some needed environment variables
 ENV HDFS_NAMENODE_USER "root"
