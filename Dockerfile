@@ -32,13 +32,13 @@ SHELL ["/bin/bash", "-c"]
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping && \
-    echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
-    echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
-    ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
-    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
-    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
-    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
-    service ssh restart
+    # echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
+    # echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
+    # ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
+    # cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
+    # echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
+    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh && 
+    # service ssh restart
 
 # Adds some needed environment variables
 ENV HDFS_NAMENODE_USER "root"
@@ -59,4 +59,4 @@ RUN chmod +x /home/hadoop/hadoop-cmd.sh
 WORKDIR /home/user
 
 # Start the Namenode and Datanode
-CMD service ssh start && sleep infinity
+# CMD service ssh start && sleep infinity
