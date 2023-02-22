@@ -3,7 +3,6 @@ services:
   namenode:
     image: dhimasarbi/hadoop:3.3.4
     command: bash -c "/home/hadoop/hadoop-cmd.sh start namenode"
-    hostname: namenode
     environment:
       - HADOOP_HOSTNAME=namenode
     ports:
@@ -29,15 +28,13 @@ services:
         mode: host
     volumes:
       - hdfs-master-data:/home/hadoop/data/nameNode
-      - /hadoop-conf:/usr/local/hadoop/etc/hadoop
       - /hadoop/namenode_data:/data
       - /hadoop/user_data:/home/user
     networks:
-      - cluster_network
+      - network
     deploy:
       mode: global
       endpoint_mode: dnsrr
-      #replicas: 1
       placement:
         constraints: [node.hostname == namenode]
 
@@ -65,10 +62,9 @@ services:
         mode: host
     volumes:
       - hdfs-worker-data:/home/hadoop/data/dataNode
-      - /hadoop-conf:/usr/local/hadoop/etc/hadoop
       - /hadoop/datanode_data:/data
     networks:
-      - cluster_network
+      - network
     deploy:
       replicas: 2
       placement:
@@ -83,6 +79,6 @@ volumes:
     name: "hdsf_worker_data_swarm"
 
 networks:
-  cluster_network:
+  network:
     driver: overlay
     attachable: true
