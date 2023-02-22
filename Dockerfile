@@ -1,5 +1,23 @@
 # Use the Ubuntu base image
-FROM ubuntu:20.04
+FROM ubuntu:20.04 as initial
+
+# Download and extract Hadoop
+# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
+COPY hadoop-3.3.4.tar.gz .
+RUN tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
+    mv hadoop-3.3.4 /usr/local/hadoop && \
+    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
+# Copy the configuration files
+WORKDIR /usr/local/hadoop/etc/hadoop
+COPY ./config/core-site.xml .
+COPY ./config/hdfs-site.xml .
+COPY ./config/mapred-site.xml .
+COPY ./config/yarn-site.xml .
+
+FROM ubuntu:20.04 as finish
+
+COPY --from=initial /usr/local/hadoop /usr/local/hadoop
 
 # Set the environment variables for Hadoop
 ENV HADOOP_HOME "/usr/local/hadoop"
@@ -21,12 +39,6 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools 
     echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
     service ssh restart
 
-# Download and extract Hadoop
-# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
-COPY hadoop-3.3.4.tar.gz .
-RUN tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
-    mv hadoop-3.3.4 /usr/local/hadoop && \
-    echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
 # Adds some needed environment variables
 ENV HDFS_NAMENODE_USER "root"
@@ -40,13 +52,7 @@ ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk/jre"
 ENV PATH $PATH:$JAVA_HOME/bin
 ENV PS1='\u@\h:\W $ '
 
-# Copy the configuration files
-WORKDIR /usr/local/hadoop/etc/hadoop
-RUN
-COPY ./config/core-site.xml .
-COPY ./config/hdfs-site.xml .
-COPY ./config/mapred-site.xml .
-COPY ./config/yarn-site.xml .
+
 
 WORKDIR /home/hadoop
 COPY ./config/hadoop-cmd.sh .
