@@ -68,10 +68,13 @@ services:
 volumes:
   hdfs-master-data:
     name: "hdfs_master_data_swarm"
+    external: true
   hdfs-master-checkpoint-data:
     name: "hdfs_master_checkpoint_data_swarm"
+    external: true
   hdfs-worker-data:
     name: "hdfs_worker_data_swarm"
+    external: true
 
 networks:
   cluster-network:
