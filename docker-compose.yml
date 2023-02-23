@@ -67,11 +67,11 @@ services:
 
 volumes:
   hdfs-master-data:
-    name: "hdsf_master_data_swarm"
+    name: "hdfs_master_data_swarm"
   hdfs-master-checkpoint-data:
-    name: "hdsf_master_checkpoint_data_swarm"
+    name: "hdfs_master_checkpoint_data_swarm"
   hdfs-worker-data:
-    name: "hdsf_worker_data_swarm"
+    name: "hdfs_worker_data_swarm"
 
 networks:
   cluster-network:
