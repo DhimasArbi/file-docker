@@ -56,5 +56,5 @@ RUN chmod +x /home/hadoop/hadoop-cmd.sh
 WORKDIR /home/user
 
 # Start the Namenode and Datanode
-#CMD service ssh start && sleep infinity
-CMD ["/home/hadoop/hadoop-cmd.sh", "-Download"]
+CMD service ssh start && sleep infinity
+# CMD ["/home/hadoop/hadoop-cmd.sh", "-Download"]
