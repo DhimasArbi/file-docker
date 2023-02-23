@@ -27,16 +27,6 @@ ENV HADOOP_MAPRED_HOME $HADOOP_HOME
 ENV HADOOP_YARN_HOME $HADOOP_HOME
 ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
 
-# Copy the configuration files
-WORKDIR /usr/local/hadoop/etc/hadoop
-RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-COPY ./config/core-site.xml .
-COPY ./config/hdfs-site.xml .
-COPY ./config/mapred-site.xml .
-COPY ./config/yarn-site.xml .
-
-
-
 # Adds some needed environment variables
 ENV HDFS_NAMENODE_USER "root"
 ENV HDFS_DATANODE_USER "root"
@@ -48,6 +38,14 @@ ENV PATH "$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin"
 ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk-amd64/jre"
 ENV PATH $PATH:$JAVA_HOME/bin
 ENV PS1='\u@\h:\W $ '
+
+# Copy the configuration files
+WORKDIR /usr/local/hadoop/etc/hadoop
+RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+COPY ./config/core-site.xml .
+COPY ./config/hdfs-site.xml .
+COPY ./config/mapred-site.xml .
+COPY ./config/yarn-site.xml .
 
 WORKDIR /home/hadoop
 COPY ./config/hadoop-cmd.sh .
