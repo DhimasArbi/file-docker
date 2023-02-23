@@ -1,14 +1,6 @@
 # Use the Ubuntu base image
 FROM ubuntu:20.04
 
-# Set the environment variables for Hadoop
-ENV HADOOP_HOME "/usr/local/hadoop"
-ENV HADOOP_COMMON_HOME $HADOOP_HOME
-ENV HADOOP_HDFS_HOME $HADOOP_HOME
-ENV HADOOP_MAPRED_HOME $HADOOP_HOME
-ENV HADOOP_YARN_HOME $HADOOP_HOME
-ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
-
 SHELL ["/bin/bash", "-c"]
 
 # Update the package repository and install Java
@@ -27,6 +19,14 @@ COPY hadoop-3.3.4.tar.gz .
 RUN tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
     mv hadoop-3.3.4 /usr/local/hadoop
 
+# Set the environment variables for Hadoop
+ENV HADOOP_HOME "/usr/local/hadoop"
+ENV HADOOP_COMMON_HOME $HADOOP_HOME
+ENV HADOOP_HDFS_HOME $HADOOP_HOME
+ENV HADOOP_MAPRED_HOME $HADOOP_HOME
+ENV HADOOP_YARN_HOME $HADOOP_HOME
+ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
+
 # Copy the configuration files
 WORKDIR /usr/local/hadoop/etc/hadoop
 RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
@@ -34,6 +34,8 @@ COPY ./config/core-site.xml .
 COPY ./config/hdfs-site.xml .
 COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
+
+
 
 # Adds some needed environment variables
 ENV HDFS_NAMENODE_USER "root"
@@ -55,3 +57,4 @@ WORKDIR /home/user
 
 # Start the Namenode and Datanode
 #CMD service ssh start && sleep infinity
+CMD ["/home/hadoop/hadoop-cmd.sh", "-Download"]

@@ -9,10 +9,6 @@ services:
         published: 9870
         protocol: tcp
         mode: host
-      - target: 9000
-        published: 9000
-        protocol: tcp
-        mode: host
       - target: 9868
         published: 9868
         protocol: tcp
