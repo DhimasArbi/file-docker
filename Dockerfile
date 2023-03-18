@@ -47,12 +47,12 @@ COPY ./config/hdfs-site.xml .
 COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
 
-WORKDIR /home/hadoop
+WORKDIR /etc
 COPY ./config/hadoop-cmd.sh .
-RUN chmod +x /home/hadoop/hadoop-cmd.sh
+RUN chmod +x /etc/hadoop-cmd.sh
 
 WORKDIR /home/user
 
 # Start the Namenode and Datanode
 CMD service ssh start && sleep infinity
-# CMD ["/home/hadoop/hadoop-cmd.sh", "-Download"]
+# CMD ["/etc/hadoop-cmd.sh && sleep infinity", "-d"]

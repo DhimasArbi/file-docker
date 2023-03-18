@@ -2,8 +2,7 @@ version: "3"
 services:
   namenode:
     image: dhimasarbi/hadoop:3.3.4
-    command: bash -c "/home/hadoop/hadoop-cmd.sh start namenode"
-    hostname: namenode
+    command: bash -c "/etc/hadoop-cmd.sh start namenode"
     ports:
       - target: 9870
         published: 9870
@@ -21,12 +20,12 @@ services:
         published: 8088
         protocol: tcp
         mode: host
+    networks:
+      - cluster-network
     volumes:
       - hdfs-master-data:/home/hadoop/data/nameNode
       - /hadoop/namenode_data:/data
       - /hadoop/user_data:/home/user
-    networks:
-      - cluster-network
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -35,29 +34,28 @@ services:
 
   datanode:
     image: dhimasarbi/hadoop:3.3.4
-    command: bash -c "/home/hadoop/hadoop-cmd.sh start"
+    command: bash -c "/etc/hadoop-cmd.sh start"
     depends_on:
       - "namenode"
-    ports:
-      - target: 9867
-        published: 9867
-        protocol: tcp
-        mode: host
-      - target: 9866
-        published: 9866
-        protocol: tcp
-        mode: host
-      - target: 9865
-        published: 9865
-        protocol: tcp
-        mode: host
-      - target: 9864
-        published: 9864
-        protocol: tcp
-        mode: host
+    # ports:
+    #   - target: 9867
+    #     published: 9867
+    #     protocol: tcp
+    #     mode: host
+    #   - target: 9866
+    #     published: 9866
+    #     protocol: tcp
+    #     mode: host
+    #   - target: 9865
+    #     published: 9865
+    #     protocol: tcp
+    #     mode: host
+    #   - target: 9864
+    #     published: 9864
+    #     protocol: tcp
+    #     mode: host
     volumes:
       - hdfs-worker-data:/home/hadoop/data/dataNode
-      - /hadoop/datanode_data:/data
     networks:
       - cluster-network
     deploy:
@@ -78,5 +76,5 @@ volumes:
 
 networks:
   cluster-network:
-    driver: overlay
-    attachable: true
+    external: true
+    name: cluster_net_swarm

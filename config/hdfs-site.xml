@@ -5,7 +5,7 @@
 <configuration>
 <property>
     <name>dfs.namenode.name.dir</name>
-    <value>/home/hadoop/data/dataNode</value>
+    <value>/home/hadoop/data/nameNode</value>
 </property>
 <property>
     <name>dfs.datanode.data.dir</name>
