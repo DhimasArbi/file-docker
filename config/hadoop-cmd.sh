@@ -17,5 +17,4 @@ if [[ $1 = "start" ]]; then
         sleep infinity
         exit
     fi
-    exit
 fi
