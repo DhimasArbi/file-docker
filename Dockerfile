@@ -14,10 +14,10 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools 
     service ssh restart
 
 # Download and extract Hadoop
-# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
-COPY hadoop-3.3.4.tar.gz .
-RUN tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
-    mv hadoop-3.3.4 /usr/local/hadoop
+# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
+COPY hadoop-3.3.5.tar.gz .
+RUN tar -xzf hadoop-3.3.5.tar.gz && rm hadoop-3.3.5.tar.gz && \
+    mv hadoop-3.3.5 /usr/local/hadoop
 
 # Set the environment variables for Hadoop
 ENV HADOOP_HOME "/usr/local/hadoop"
