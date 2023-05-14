@@ -17,9 +17,9 @@ RUN apt-get update \
     service ssh restart
 
 # Download and extract Hadoop
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
 #COPY hadoop-3.3.5.tar.gz .
-RUN tar -xzf hadoop-3.3.5.tar.gz \
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
+    tar -xzf hadoop-3.3.5.tar.gz \
     && rm hadoop-3.3.5.tar.gz \
     && echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
     && echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
@@ -56,6 +56,7 @@ COPY ./config/hadoop-cmd.sh .
 RUN chmod +x /etc/bdcluster/hadoop-cmd.sh
 
 WORKDIR /home/user
+RUN mkdir data
 
 # Start the Namenode and Datanode
 CMD service ssh start && sleep infinity
