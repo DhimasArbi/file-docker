@@ -1,11 +1,14 @@
 # Use the Ubuntu base image
 FROM ubuntu:20.04
 
+ENV HADOOP_HOME "/usr/local/hadoop"
+
 SHELL ["/bin/bash", "-c"]
 
 # Update the package repository and install Java
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping ssh openssh-server openssh-client &&\
+RUN apt-get update \
+    && apt-get install -y openjdk-8-jdk nano wget sudo net-tools iputils-ping ssh openssh-server openssh-client &&\
     echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
     echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
     ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
@@ -14,13 +17,16 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk nano wget sudo net-tools 
     service ssh restart
 
 # Download and extract Hadoop
-# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && \
-COPY hadoop-3.3.4.tar.gz .
-RUN tar -xzf hadoop-3.3.4.tar.gz && rm hadoop-3.3.4.tar.gz && \
-    mv hadoop-3.3.4 /usr/local/hadoop
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
+#COPY hadoop-3.3.5.tar.gz .
+RUN tar -xzf hadoop-3.3.5.tar.gz \
+    && rm hadoop-3.3.5.tar.gz \
+    && echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
+    && echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
+    && echo 'export PATH=$PATH:$HADOOP_HOME/sbin' >> ~/.bashrc \
+    && mv hadoop-3.3.5 /usr/local/hadoop
 
 # Set the environment variables for Hadoop
-ENV HADOOP_HOME "/usr/local/hadoop"
 ENV HADOOP_COMMON_HOME $HADOOP_HOME
 ENV HADOOP_HDFS_HOME $HADOOP_HOME
 ENV HADOOP_MAPRED_HOME $HADOOP_HOME
@@ -34,10 +40,7 @@ ENV HDFS_SECONDARYNAMENODE_USER "root"
 ENV YARN_RESOURCEMANAGER_USER "root"
 ENV YARN_NODEMANAGER_USER "root"
 
-ENV PATH "$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin"
-ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk-amd64/jre"
-ENV PATH $PATH:$JAVA_HOME/bin
-ENV PS1='\u@\h:\W $ '
+# ENV PS1='\u@\h:\W $ '
 
 # Copy the configuration files
 WORKDIR /usr/local/hadoop/etc/hadoop
@@ -48,11 +51,11 @@ COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
 
 WORKDIR /etc
+RUN mkdir bdcluster && cd bdcluster
 COPY ./config/hadoop-cmd.sh .
-RUN chmod +x /etc/hadoop-cmd.sh
+RUN chmod +x /etc/bdcluster/hadoop-cmd.sh
 
 WORKDIR /home/user
 
 # Start the Namenode and Datanode
 CMD service ssh start && sleep infinity
-# CMD ["/etc/hadoop-cmd.sh && sleep infinity", "-d"]

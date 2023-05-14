@@ -2,7 +2,7 @@ version: "3.6"
 services:
   # Master
   master-node:
-    image: "jwaresolutions/big-data-cluster:0.4.1"
+    image: "dhimasarbi/bdcluster:latest"
     command: bash -c "/home/big_data/spark-cmd.sh start master-node"
     ports:
       - target: 8088
@@ -21,10 +21,11 @@ services:
         published: 18080
         protocol: tcp
         mode: host
+    hostname: master-node
     networks:
       - cluster-net
     volumes:
-      # - "./data:/home/big_data/data" # Your data
+      - "/home/hadoop/data:/home/big_data/data"
       - hdfs-master-data:/home/hadoop/data/nameNode
       - hdfs-master-checkpoint-data:/home/hadoop/data/namesecondary
     deploy:
@@ -37,7 +38,7 @@ services:
 
   # Workers
   worker:
-    image: "jwaresolutions/big-data-cluster:0.4.1"
+    image: "dhimasarbi/bdcluster:latest"
     command: bash -c "/home/big_data/spark-cmd.sh start"
     depends_on:
       - "master-node"
