@@ -51,9 +51,8 @@ COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
 
 WORKDIR /etc
-RUN mkdir bdcluster && cd bdcluster
 COPY ./config/hadoop-cmd.sh .
-RUN chmod +x /etc/bdcluster/hadoop-cmd.sh
+RUN chmod +x /etc/hadoop-cmd.sh
 
 WORKDIR /home/user
 RUN mkdir data
