@@ -20,10 +20,8 @@ fi
 
 if [[ $1 = "stop" ]]; then
     echo "Menghentikan HDFS and Yarn"
-    $HADOOP_HOME/sbin/stop-dfs.sh
+    $HADOOP_HOME/sbin/start-dfs.sh
     sleep 5
-    $HADOOP_HOME/sbin/stop-yarn.sh
+    $HADOOP_HOME/sbin/start-yarn.sh
     sleep 5
-
-    exit
 fi

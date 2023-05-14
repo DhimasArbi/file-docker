@@ -1,21 +1,29 @@
 #!/bin/bash
 
-service ssh start
+: ${HADOOP_HOME:=/usr/local/hadoop}
 
-if [[ $1 = "start" ]]; then
+/usr/sbin/sshd
+
+if [[ $1 == "start" ]]; then
     echo "Memulai layanan HDFS and Yarn"
     $HADOOP_HOME/sbin/start-dfs.sh
     sleep 5
     $HADOOP_HOME/sbin/start-yarn.sh
     sleep 5
-    
     if [[ $2 = "namenode" ]]; then
         echo "Disables safe mode to prevent errors in small clusters"
         /usr/local/hadoop/bin/hdfs dfsadmin -safemode leave
 
-        sleep infinity
+        while true; do read; done
         exit
     fi
+
+    while true; do read; done
+    exit
+elif [[ $1 == "-d" ]]; then
+  while true; do read; done
+elif [[ $1 == "-bash" ]]; then
+  /bin/bash
 fi
 
 if [[ $1 = "stop" ]]; then
@@ -24,6 +32,5 @@ if [[ $1 = "stop" ]]; then
     sleep 5
     $HADOOP_HOME/sbin/stop-yarn.sh
     sleep 5
-
-    exit
 fi
+
