@@ -17,14 +17,14 @@ RUN apt-get update \
     service ssh restart
 
 # Download and extract Hadoop
-#COPY hadoop-3.3.5.tar.gz .
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
-    tar -xzf hadoop-3.3.5.tar.gz \
-    && rm hadoop-3.3.5.tar.gz \
+COPY hadoop-3.3.5.tar.gz .
+# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
+RUN tar -xzf hadoop-3.3.5.tar.gz \
     && mv hadoop-3.3.5 /usr/local/hadoop \
     && echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
     && echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
-    && echo 'export PATH=$PATH:$HADOOP_HOME/sbin' >> ~/.bashrc
+    && echo 'export PATH=$PATH:$HADOOP_HOME/sbin' >> ~/.bashrc \
+    && rm hadoop-3.3.5.tar.gz
 
 # Set the environment variables for Hadoop
 ENV HADOOP_COMMON_HOME $HADOOP_HOME
