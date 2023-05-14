@@ -8,7 +8,7 @@ ENV HADOOP_HOME /usr/local/hadoop
 ENV PATH $PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 
 # Update the package repository dan install Java
-RUN apk update && apk add --no-cache openssh openssl openjdk8-jre rsync bash procps nss
+RUN apk update && apk add --no-cache openssh nano openssl openjdk8-jre rsync bash procps nss
 
 # set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
@@ -31,12 +31,18 @@ RUN tar -xzf hadoop-3.3.5.tar.gz -C /usr/local && rm hadoop-3.3.5.tar.gz
 RUN ln -s /usr/local/hadoop-3.3.5 /usr/local/hadoop
 
 # Set environment variables for Hadoop
-ENV HADOOP_PREFIX $HADOOP_HOME
 ENV HADOOP_COMMON_HOME $HADOOP_HOME
 ENV HADOOP_HDFS_HOME $HADOOP_HOME
 ENV HADOOP_MAPRED_HOME $HADOOP_HOME
 ENV HADOOP_YARN_HOME $HADOOP_HOME
 ENV HADOOP_CONF_DIR $HADOOP_HOME/etc/hadoop
+
+# Adds some needed environment variables
+ENV HDFS_NAMENODE_USER "root"
+ENV HDFS_DATANODE_USER "root"
+ENV HDFS_SECONDARYNAMENODE_USER "root"
+ENV YARN_RESOURCEMANAGER_USER "root"
+ENV YARN_NODEMANAGER_USER "root"
 
 # Copy the configuration files
 COPY ./config/core-site.xml $HADOOP_CONF_DIR/core-site.xml
@@ -46,8 +52,8 @@ COPY ./config/yarn-site.xml $HADOOP_CONF_DIR/yarn-site.xml
 COPY ./config/workers $HADOOP_CONF_DIR/workers
 
 # update JAVA_HOME and HADOOP_CONF_DIR in hadoop-env.sh
-RUN sed -i "/^export JAVA_HOME/ s:.*:export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_PREFIX=${HADOOP_PREFIX}:" ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
-RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=$HADOOP_PREFIX/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN sed -i "/^export JAVA_HOME/ s:.*:export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}:" ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
 WORKDIR /etc
 COPY ./config/run.sh .
