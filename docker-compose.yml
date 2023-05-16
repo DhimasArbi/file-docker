@@ -1,8 +1,8 @@
 version: "3"
 services:
   namenode:
-    image: dhimasarbi/hadoop:3.3.4
-    command: bash -c "/etc/bdcluster/hadoop-cmd.sh start namenode"
+    image: dhimasarbi/hadoop:latest
+    command: bash -c "/etc/run.sh start namenode"
     ports:
       - target: 9870
         published: 9870
@@ -13,7 +13,6 @@ services:
         protocol: tcp
         mode: host
     hostname: namenode
-    container_name: big-data-cluster
     networks:
       - cluster-network
     volumes:
@@ -27,9 +26,10 @@ services:
         constraints:
           - node.labels.role == master
 
-  datanode:
-    image: dhimasarbi/hadoop:3.3.4
-    command: bash -c "/etc/bdcluster/hadoop-cmd.sh start"
+  datanode1:
+    image: dhimasarbi/hadoop:latest
+    command: bash -c "/etc/run.sh start"
+    hostname: datanode1
     depends_on:
       - "namenode"
     volumes:
@@ -37,7 +37,34 @@ services:
     networks:
       - cluster-network
     deploy:
-      replicas: 2
+      placement:
+        constraints:
+          - node.labels.role == worker
+  datanode2:
+    image: dhimasarbi/hadoop:latest
+    command: bash -c "/etc/run.sh start"
+    hostname: datanode2
+    depends_on:
+      - "namenode"
+    volumes:
+      - hdfs-worker-data:/home/hadoop/data/dataNode
+    networks:
+      - cluster-network
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == worker
+  datanode3:
+    image: dhimasarbi/hadoop:latest
+    command: bash -c "/etc/run.sh start"
+    hostname: datanode3
+    depends_on:
+      - "namenode"
+    volumes:
+      - hdfs-worker-data:/home/hadoop/data/dataNode
+    networks:
+      - cluster-network
+    deploy:
       placement:
         constraints:
           - node.labels.role == worker

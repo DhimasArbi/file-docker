@@ -25,12 +25,17 @@ RUN /usr/sbin/sshd
 # Download dan extract Hadoop
 #COPY hadoop-3.3.5.tar.gz .
 #RUN wget -O hadoop.tar.gz https://dlcdn.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz && \
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+# RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+# wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && \
+# tar -xzf hadoop-3.3.5.tar.gz -C /usr/local && rm hadoop-3.3.5.tar.gz ; \
+# RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
+# tar -xzf hadoop-3.3.5-aarch64.tar.gz -C /usr/local && rm hadoop-3.3.5-aarch64.tar.gz ; fi
+RUN if [[ "$TARGETPLATFORM" = "linux/amd64" ]]; then \
 wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && \
 tar -xzf hadoop-3.3.5.tar.gz -C /usr/local && rm hadoop-3.3.5.tar.gz ; \
-else wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
+elif [[ "$TARGETPLATFORM" = "linux/arm64" ]]; then \
+wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
 tar -xzf hadoop-3.3.5-aarch64.tar.gz -C /usr/local && rm hadoop-3.3.5-aarch64.tar.gz ; fi
-
 
 #RUN tar -xzf hadoop-3.3.5.tar.gz -C /usr/local && rm hadoop-3.3.5.tar.gz
 

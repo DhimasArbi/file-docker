@@ -12,9 +12,9 @@
     <value>/home/hadoop/data/dataNode</value>
 </property>
 <property>
-		<name>dfs.namenode.secondary.http-address</name>
-		<value>datanode1:9868</value>
-	</property>
+	<name>dfs.namenode.secondary.http-address</name>
+	<value>datanode1:9868</value>
+</property>
 <property>
     <name>dfs.replication</name>
     <value>3</value>

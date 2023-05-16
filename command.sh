@@ -1,7 +1,7 @@
-docker container run --rm -v hdfs_master_data_swarm:/home/hadoop/data/nameNode dhimasarbi/bdcluster:alpine /usr/local/hadoop/bin/hadoop namenode -format
+docker container run --rm -v hdfs_master_data_swarm:/home/hadoop/data/nameNode dhimasarbi/bdcluster:latest /usr/local/hadoop/bin/hdfs namenode -format
 
 docker service create \
-  --name hadoop-node021 \
+  --name namenode \
   --hostname namenode \
   --publish published=8088,target=8088,protocol=tcp,mode=host \
   --publish published=8080,target=8080,protocol=tcp,mode=host \
@@ -13,36 +13,36 @@ docker service create \
   --mount type=volume,source=hdfs_master_checkpoint_data_swarm,target=/home/hadoop/data/namesecondary \
   --mode global \
   --endpoint-mode dnsrr \
-  --constraint 'node.labels.role==master'\
-  dhimasarbi/bdcluster:alpine \
-  bash -c "/usr/run.sh start namenode"
+  --constraint 'node.labels.role==manager'\
+  dhimasarbi/bdcluster:latest \
+  bash -c "/etc/run.sh start namenode"
 
 docker service create \
-  --name hadoop-node022 \
+  --name datanode1 \
   --hostname datanode1 \
   --mount type=volume,source=hdfs_worker_data_swarm,target=/home/hadoop/data/dataNode \
   --network cluster_net_swarm \
   --constraint 'node.labels.role==worker' \
-  dhimasarbi/bdcluster:alpine \
-  bash -c "/usr/run.sh start"
+  dhimasarbi/bdcluster:latest \
+  bash -c "/etc/run.sh start"
 
 docker service create \
-  --name hadoop-node023 \
+  --name datanode2 \
   --hostname datanode2 \
   --mount type=volume,source=hdfs_worker_data_swarm,target=/home/hadoop/data/dataNode \
   --network cluster_net_swarm \
   --constraint 'node.labels.role==worker' \
-  dhimasarbi/bdcluster:alpine \
-  bash -c "/usr/run.sh start"
+  dhimasarbi/bdcluster:latest \
+  bash -c "/etc/run.sh start"
 
 docker service create \
-  --name hadoop-node024 \
+  --name datanode3 \
   --hostname datanode3 \
   --mount type=volume,source=hdfs_worker_data_swarm,target=/home/hadoop/data/dataNode \
   --network cluster_net_swarm \
   --constraint 'node.labels.role==worker' \
-  dhimasarbi/bdcluster:alpine \
-  bash -c "/usr/run.sh start"
+  dhimasarbi/bdcluster:latest \
+  bash -c "/etc/run.sh start"
 
 
 docker exec -it $(docker container ls --format "{{.Names}}") bash

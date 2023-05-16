@@ -2,13 +2,13 @@
 
 service ssh start
 
+echo "Memulai layanan HDFS and Yarn"
+$HADOOP_HOME/sbin/start-dfs.sh
+sleep 5
+$HADOOP_HOME/sbin/start-yarn.sh
+sleep 5
+
 if [[ $1 = "start" ]]; then
-    echo "Memulai layanan HDFS and Yarn"
-    $HADOOP_HOME/sbin/start-dfs.sh
-    sleep 5
-    $HADOOP_HOME/sbin/start-yarn.sh
-    sleep 5
-    
     if [[ $2 = "namenode" ]]; then
         echo "Disables safe mode to prevent errors in small clusters"
         /usr/local/hadoop/bin/hdfs dfsadmin -safemode leave
@@ -16,6 +16,9 @@ if [[ $1 = "start" ]]; then
         sleep infinity
         exit
     fi
+
+    sleep infinity
+    exit
 fi
 
 if [[ $1 = "stop" ]]; then
