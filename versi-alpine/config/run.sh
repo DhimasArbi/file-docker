@@ -4,29 +4,31 @@
 
 /usr/sbin/sshd
 
+echo "Memulai layanan HDFS and Yarn"
+$HADOOP_HOME/sbin/start-dfs.sh
+sleep 5
+$HADOOP_HOME/sbin/start-yarn.sh
+sleep 5
+
 if [[ $1 == "start" ]]; then
-    echo "Memulai layanan HDFS and Yarn"
-    $HADOOP_HOME/sbin/start-dfs.sh
-    sleep 5
-    $HADOOP_HOME/sbin/start-yarn.sh
-    sleep 5
-    if [[ $2 = "namenode" ]]; then
+    
+    if [[ $2 == "namenode" ]]; then
         echo "Disables safe mode to prevent errors in small clusters"
         /usr/local/hadoop/bin/hdfs dfsadmin -safemode leave
 
-        while true; do read; done
+        while true; do sleep 1000; done
         exit
     fi
 
-    while true; do read; done
+    while true; do sleep 1000; done
     exit
 elif [[ $1 == "-d" ]]; then
-  while true; do read; done
+  while true; do sleep 1000; done
 elif [[ $1 == "-bash" ]]; then
   /bin/bash
 fi
 
-if [[ $1 = "stop" ]]; then
+if [[ $1 == "stop" ]]; then
     echo "Menghentikan HDFS and Yarn"
     $HADOOP_HOME/sbin/stop-dfs.sh
     sleep 5

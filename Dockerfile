@@ -21,13 +21,13 @@ RUN echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
 
 # Download and extract Hadoop
 #COPY hadoop-3.3.5.tar.gz .
-RUN wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && tar -xzf hadoop-3.3.5.tar.gz
-# RUN if [[ "$TARGETPLATFORM" = "linux/amd64" ]]; then \
-# wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && \
-# tar -xzf hadoop-3.3.5.tar.gz && rm hadoop-3.3.5.tar.gz ; \
-# elif [[ "$TARGETPLATFORM" = "linux/arm64" ]]; then \
-# wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
-# tar -xzf hadoop-3.3.5-aarch64.tar.gz && rm hadoop-3.3.5-aarch64.tar.gz ; fi
+#RUN wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && tar -xzf hadoop-3.3.5.tar.gz && rm hadoop-3.3.5.tar.gz 
+RUN if [[ "$TARGETPLATFORM" = "linux/amd64" ]]; then \
+wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && \
+tar -xzf hadoop-3.3.5.tar.gz && rm hadoop-3.3.5.tar.gz ; \
+elif [[ "$TARGETPLATFORM" = "linux/arm64" ]]; then \
+wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
+tar -xzf hadoop-3.3.5-aarch64.tar.gz && rm hadoop-3.3.5-aarch64.tar.gz ; fi
 
 RUN mv hadoop-3.3.5 /usr/local/hadoop \
     && echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \

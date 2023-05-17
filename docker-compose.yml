@@ -17,8 +17,8 @@ services:
       - cluster-network
     volumes:
       - /hadoop/hadoop/data:/home/user/data
-      - hdfs-master-data:/home/hadoop/data/nameNode
-      - hdfs-master-checkpoint-data:/home/hadoop/data/namesecondary
+      - hdfs-master-data:/usr/local/hadoop/data/nameNode
+      - hdfs-master-checkpoint-data:/usr/local/hadoop/data/namesecondary
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -33,7 +33,7 @@ services:
     depends_on:
       - "namenode"
     volumes:
-      - hdfs-worker-data:/home/hadoop/data/dataNode
+      - hdfs-worker-data:/usr/local/hadoop/data/dataNode
     networks:
       - cluster-network
     deploy:
@@ -47,7 +47,7 @@ services:
     depends_on:
       - "namenode"
     volumes:
-      - hdfs-worker-data:/home/hadoop/data/dataNode
+      - hdfs-worker-data:/usr/local/hadoop/data/dataNode
     networks:
       - cluster-network
     deploy:
@@ -61,7 +61,7 @@ services:
     depends_on:
       - "namenode"
     volumes:
-      - hdfs-worker-data:/home/hadoop/data/dataNode
+      - hdfs-worker-data:/usr/local/hadoop/data/dataNode
     networks:
       - cluster-network
     deploy:
