@@ -16,6 +16,14 @@
       <value>/usr/local/hadoop/data/namesecondary</value>
     </property>
     <property>
+		<name>dfs.namenode.secondary.http-address</name>
+		<value>datanode1:9868</value>
+	</property>
+    <property>
+		<name>dfs.namenode.http-address</name>
+		<value>0.0.0.0:9870</value>
+	</property>
+    <property>
         <name>dfs.replication</name>
         <value>3</value>
     </property>

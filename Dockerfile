@@ -1,5 +1,5 @@
 # Use the Ubuntu base image
-FROM ubuntu:20.04
+FROM ubuntu:latest
 
 ARG TARGETPLATFORM
 
@@ -13,11 +13,11 @@ RUN apt update
 RUN apt install -y openjdk-8-jdk nano wget sudo iputils-ping ssh openssh-server openssh-client
 RUN apt clean
 RUN echo 'ssh:ALL:allow' >> /etc/hosts.allow && \
-    echo 'sshd:ALL:allow' >> /etc/hosts.allow && \
-    ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
+    echo 'sshd:ALL:allow' >> /etc/hosts.allow
+RUN ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa && \
     cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
-    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
-    service ssh restart
+    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+RUN service ssh restart
 
 # Download and extract Hadoop
 #COPY hadoop-3.3.5.tar.gz .
@@ -63,7 +63,15 @@ WORKDIR /etc
 COPY ./config/run.sh .
 RUN chmod +x /etc/run.sh
 
-WORKDIR /home/user
+# Add the alias commands to .bashrc
+RUN echo 'alias stop="/etc/run.sh stop"' >> /root/.bashrc && \
+    echo 'alias start="/etc/run.sh start"' >> /root/.bashrc && \
+    echo 'alias fix="/etc/run.sh -f"' >> /root/.bashrc && \
+    echo 'alias format="/etc/run.sh -format"' >> /root/.bashrc && \
+    echo 'alias init="/etc/run.sh initial"' >> /root/.bashrc && \
+    echo 'alias getcid="/etc/run.sh getcid"' >> /root/.bashrc
+
+WORKDIR /home/hadoop
 RUN mkdir data
 
 # Start the Namenode and Datanode
