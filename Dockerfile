@@ -1,16 +1,46 @@
-# Use the Ubuntu base image
-FROM ubuntu:latest
+FROM alpine:latest as initial
 
 ARG TARGETPLATFORM
+ENV HDV=3.3.5
+RUN apk update && apk add --no-cache curl
+
+# Download and extract Hadoop
+WORKDIR /app
+RUN if [[ "$TARGETPLATFORM" == "linux/amd64" ]]; then \
+        curl https://dlcdn.apache.org/hadoop/common/stable/hadoop-$HDV.tar.gz | tar -xz ; \
+    fi
+        
+RUN if [[ "$TARGETPLATFORM" == "linux/arm64" ]]; then \
+        curl https://dlcdn.apache.org/hadoop/common/stable/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
+    fi
+RUN mv hadoop-$HDV hadoop \
+    && echo 'export JAVA_HOME=/opt/java/openjdk' >> /app/hadoop/etc/hadoop/hadoop-env.sh
+
+COPY ./config/run.sh .
+
+# Copy the configuration files
+WORKDIR /app/hadoop/etc/hadoop
+COPY ./config/core-site.xml \
+    ./config/hdfs-site.xml \
+    ./config/mapred-site.xml \
+    ./config/yarn-site.xml \
+    ./config/workers ./
+
+
+FROM eclipse-temurin:8-jdk as build
 
 SHELL ["/bin/bash", "-c"]
+
+COPY --from=initial  /app/hadoop /usr/local/hadoop
+COPY --from=initial  /app/run.sh /etc
 
 ENV HADOOP_HOME "/usr/local/hadoop"
 
 # Update the package repository and install Java
-ENV DEBIAN_FRONTEND noninteractive
 RUN apt update \
-    && apt install -y openjdk-8-jdk nano curl sudo iputils-ping ssh openssh-server openssh-client \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt install -y --no-install-recommends \
+    nano ssh openssh-server openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo 'ssh:ALL:allow' >> /etc/hosts.allow \
@@ -20,17 +50,9 @@ RUN echo 'ssh:ALL:allow' >> /etc/hosts.allow \
     && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
     && service ssh restart
 
-# Download and extract Hadoop
-RUN if [[ "$TARGETPLATFORM" = "linux/amd64" ]]; then \
-curl -LO https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && \
-tar -xzf hadoop-3.3.5.tar.gz && rm hadoop-3.3.5.tar.gz ; \
-elif [[ "$TARGETPLATFORM" = "linux/arm64" ]]; then \
-curl -LO https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
-tar -xzf hadoop-3.3.5-aarch64.tar.gz && rm hadoop-3.3.5-aarch64.tar.gz ; fi
-
-RUN mv hadoop-3.3.5 /usr/local/hadoop \
-    && echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
-    && echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
+# RUN mv hadoop-$HDV /usr/local/hadoop \
+# RUN echo 'export JAVA_HOME=/opt/java/openjdk' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
+RUN echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
     && echo 'export PATH=$PATH:$HADOOP_HOME/sbin' >> ~/.bashrc 
 
 # Set the environment variables for Hadoop
@@ -47,21 +69,9 @@ ENV HDFS_SECONDARYNAMENODE_USER "root"
 ENV YARN_RESOURCEMANAGER_USER "root"
 ENV YARN_NODEMANAGER_USER "root"
 
-ENV PS1='\u@\h:\w\a\$ '
+# ENV PS1='\u@\h:\w\a\$ '
 
-# Copy the configuration files
-WORKDIR /usr/local/hadoop/etc/hadoop
-RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-COPY ./config/core-site.xml .
-COPY ./config/hdfs-site.xml .
-COPY ./config/mapred-site.xml .
-COPY ./config/yarn-site.xml .
-COPY ./config/workers .
-
-WORKDIR /etc
-COPY ./config/run.sh .
-RUN chmod +x /etc/run.sh \
-    && ln -s /etc/run.sh /usr/bin/bdcluster && chmod 700 /usr/bin/bdcluster
+RUN chmod +x /etc/run.sh && ln -s /etc/run.sh /usr/bin/bdcluster && chmod 700 /usr/bin/bdcluster
 
 WORKDIR /home/hadoop
 RUN mkdir data
