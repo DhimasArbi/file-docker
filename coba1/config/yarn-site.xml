@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<configuration>
+  <property>
+    <name>yarn.resourcemaganer.hostname</name>
+    <value>namenode</value>
+  </property>
+  <property>
+      <name>yarn.resourcemanager.webapp.address</name>
+      <value>0.0.0.0:8088</value>
+    </property>
+</configuration>

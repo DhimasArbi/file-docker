@@ -1,26 +1,23 @@
-# Use the Ubuntu base image
-FROM ubuntu:latest
+FROM alpine:latest
 
 ARG TARGETPLATFORM
 
+RUN apk update && apk add --no-cache openssh openssl bash nano procps openjdk8-jre curl
+
 SHELL ["/bin/bash", "-c"]
 
+ENV PS1='\u@\h:\w\a\$ '
+
 ENV HADOOP_HOME "/usr/local/hadoop"
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
+ENV PATH $PATH:$JAVA_HOME/bin
 
-# Update the package repository and install Java
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt update \
-    && apt install -y openjdk-8-jdk nano curl sudo iputils-ping ssh openssh-server openssh-client \
-    && rm -rf /var/lib/apt/lists/*
+RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
+    ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
+    ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
+    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
-RUN echo 'ssh:ALL:allow' >> /etc/hosts.allow \
-    && echo 'sshd:ALL:allow' >> /etc/hosts.allow \
-    && ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa \
-    && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
-    && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
-    && service ssh restart
-
-# Download and extract Hadoop
 RUN if [[ "$TARGETPLATFORM" = "linux/amd64" ]]; then \
 curl -LO https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5.tar.gz && \
 tar -xzf hadoop-3.3.5.tar.gz && rm hadoop-3.3.5.tar.gz ; \
@@ -28,12 +25,15 @@ elif [[ "$TARGETPLATFORM" = "linux/arm64" ]]; then \
 curl -LO https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz && \
 tar -xzf hadoop-3.3.5-aarch64.tar.gz && rm hadoop-3.3.5-aarch64.tar.gz ; fi
 
-RUN mv hadoop-3.3.5 /usr/local/hadoop \
-    && echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
+# RUN curl -LO -O hadoop.tar.gz https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.5-aarch64.tar.gz
+# RUN tar -xzf hadoop.tar.gz && rm hadoop.tar.gz
+
+RUN mv hadoop-3.3.5 /usr/local/hadoop
+RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
     && echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
     && echo 'export PATH=$PATH:$HADOOP_HOME/sbin' >> ~/.bashrc 
 
-# Set the environment variables for Hadoop
+# Set environment variables for Hadoop
 ENV HADOOP_COMMON_HOME $HADOOP_HOME
 ENV HADOOP_HDFS_HOME $HADOOP_HOME
 ENV HADOOP_MAPRED_HOME $HADOOP_HOME
@@ -47,24 +47,22 @@ ENV HDFS_SECONDARYNAMENODE_USER "root"
 ENV YARN_RESOURCEMANAGER_USER "root"
 ENV YARN_NODEMANAGER_USER "root"
 
-ENV PS1='\u@\h:\w\a\$ '
-
 # Copy the configuration files
 WORKDIR /usr/local/hadoop/etc/hadoop
-RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 COPY ./config/core-site.xml .
 COPY ./config/hdfs-site.xml .
 COPY ./config/mapred-site.xml .
 COPY ./config/yarn-site.xml .
 COPY ./config/workers .
 
+# RUN sed -i "/^export JAVA_HOME/ s:.*:export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}:" ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+# RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
 WORKDIR /etc
 COPY ./config/run.sh .
-RUN chmod +x /etc/run.sh \
-    && ln -s /etc/run.sh /usr/bin/bdcluster && chmod 700 /usr/bin/bdcluster
+RUN chmod +x /etc/run.sh
 
 WORKDIR /home/hadoop
 RUN mkdir data
 
-# Start the Namenode and Datanode
-CMD service ssh start && sleep infinity
+CMD /usr/sbin/sshd && sleep infinity
