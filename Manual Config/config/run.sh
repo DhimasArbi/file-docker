@@ -28,7 +28,7 @@ start_layanan(){
 
 start_ssh(){
     echo "Memulai ssh service"
-    /usr/sbin/sshd
+    service ssh start
     sleep 5
 }
 
