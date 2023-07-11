@@ -190,16 +190,16 @@ fix_datanode_na(){
     start_layanan "all"
 }
 
-if [ $1 == "initial" ]; then
+if [[ $1 == "initial" ]]; then
     initial $2
-elif [ $1 == "fix" ]; then
+elif [[ $1 == "fix" ]]; then
     fix_datanode_na
-elif [ $1 == "format" ]; then
+elif [[ $1 == "format" ]]; then
     format_namenode $2 $3
-elif [ $1 == "stop" ]; then
+elif [[ $1 == "stop" ]]; then
     stop_layanan $2
-elif [ $1 == "start" ]; then
+elif [[ $1 == "start" ]]; then
     start_layanan $2
-elif [ $1 == "getcid" ]; then
+elif [[ $1 == "getcid" ]]; then
     get_cid
 fi
