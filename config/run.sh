@@ -66,11 +66,11 @@ initial(){
 
 format_namenode(){
     if [[ $1 == "clusterid" ]]; then
-        /usr/local/hadoop/bin/hdfs namenode -format -clusterId $2 -force
+        /usr/local/hadoop/bin/hdfs namenode -format -clusterId $2 -nonInteractive
     elif [[ $1 == "normal" ]]; then
-        /usr/local/hadoop/bin/hdfs namenode -format
+        /usr/local/hadoop/bin/hdfs namenode -format -nonInteractive
     elif [[ $1 == "force" ]]; then
-        /usr/local/hadoop/bin/hdfs namenode -format -force
+        /usr/local/hadoop/bin/hdfs namenode -format -force -nonInteractive
     fi
 }
 
@@ -89,10 +89,9 @@ get_cid(){
     fi
     for host in "${hosts[@]}"; do
        if ping -c 1 "$host" &> /dev/null; then
-            folderExists=$(ssh -o StrictHostKeyChecking=no datanode1 "[ -d '/usr/local/hadoop/data/' ] && \
-            echo 'yes'||echo 'no'");
+            folderExists=$(ssh $host "[ -d '/usr/local/hadoop/data/' ] && echo 'yes'||echo 'no'");
             if [[ $folderExists == "yes" ]]; then
-                output=$(ssh -o StrictHostKeyChecking=no $host "cat /usr/local/hadoop/data/dataNode/current/VERSION")
+                output=$(ssh $host "cat /usr/local/hadoop/data/dataNode/current/VERSION")
                 if [[ $host = "datanode1" ]]; then
                     cluster_id_datanode1=$(echo "$output" | awk -F'clusterID=' '{print $2}' | tr -d '[:space:]')
                     echo "clusterID $host: $cluster_id_datanode1"
@@ -142,11 +141,11 @@ rm_folder_data(){
     fi
     for host in "${hosts[@]}"; do
         if ping -c 1 "$host" &> /dev/null; then
-            folderExists=$(ssh -o StrictHostKeyChecking=no $host "[ -d '/usr/local/hadoop/data/' ] && \
+            folderExists=$(ssh $host "[ -d '/usr/local/hadoop/data/' ] && \
             echo 'yes'||echo 'no'")
             if [[ $folderExists == 'yes' ]]; then
                 echo "Menghapus folder data dataNode pada $host"
-                ssh -o StrictHostKeyChecking=no $host "rm -rf /usr/local/hadoop/data/dataNode && rm -rf /tmp/hadoop* && exit"
+                ssh $host "rm -rf /usr/local/hadoop/data/dataNode && rm -rf /tmp/hadoop* && exit"
                 sleep 1
             else
                 echo "Folder tidak ada!!"

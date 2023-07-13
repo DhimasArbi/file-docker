@@ -7,11 +7,11 @@ RUN apk update && apk add --no-cache curl
 # Download and extract Hadoop
 WORKDIR /app
 RUN if [[ "$TARGETPLATFORM" == "linux/amd64" ]]; then \
-        curl https://dlcdn.apache.org/hadoop/common/stable/hadoop-$HDV.tar.gz | tar -xz ; \
+        curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV.tar.gz | tar -xz ; \
     fi
         
 RUN if [[ "$TARGETPLATFORM" == "linux/arm64" ]]; then \
-        curl https://dlcdn.apache.org/hadoop/common/stable/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
+        curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
     fi
 RUN mv hadoop-$HDV hadoop \
     && echo 'export JAVA_HOME=/opt/java/openjdk' >> /app/hadoop/etc/hadoop/hadoop-env.sh
@@ -52,7 +52,7 @@ ENV YARN_NODEMANAGER_USER "root"
 RUN apt update \
     && export DEBIAN_FRONTEND=noninteractive \
     && apt install -y --no-install-recommends \
-    nano ssh openssh-server openssh-client \
+    nano ssh openssh-server openssh-client iputils-ping \
     && rm -rf /var/lib/apt/lists/* && \
     echo 'ssh:ALL:allow' >> /etc/hosts.allow \
     && echo 'sshd:ALL:allow' >> /etc/hosts.allow \
@@ -66,7 +66,8 @@ RUN apt update \
     echo 'export PATH=$PATH:$HADOOP_HOME/bin' >> ~/.bashrc \
     && echo 'export PATH=$PATH:$HADOOP_HOME/sbin' >> ~/.bashrc \
     && chmod +x /etc/run.sh && ln -s /etc/run.sh /usr/bin/bdcluster \
-    && chmod 700 /usr/bin/bdcluster
+    && chmod 700 /usr/bin/bdcluster \
+    && echo 'export PS1="\h:\w# "' >> ~/.bashrc
 # RUN mv hadoop-$HDV /usr/local/hadoop \
 # RUN echo 'export JAVA_HOME=/opt/java/openjdk' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
 
