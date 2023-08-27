@@ -1,30 +1,29 @@
 FROM alpine:latest as initial
 
 ARG TARGETPLATFORM
-ENV HDV=3.3.6
+ENV HDV=3.2.4
 RUN apk update && apk add --no-cache curl
 
-# Download and extract Hadoop
+# Download dan ekstrak Hadoop
 WORKDIR /app
 RUN if [[ "$TARGETPLATFORM" == "linux/amd64" ]]; then \
         curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV.tar.gz | tar -xz ; \
     fi
         
-RUN if [[ "$TARGETPLATFORM" == "linux/arm64" ]]; then \
-        curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
-    fi
+# RUN if [[ "$TARGETPLATFORM" == "linux/arm64" ]]; then \
+#         curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
+#     fi
 RUN mv hadoop-$HDV hadoop \
     && echo 'export JAVA_HOME=/opt/java/openjdk' >> /app/hadoop/etc/hadoop/hadoop-env.sh
 
 COPY ./config/run.sh .
 
-# Copy the configuration files
+# Copy file konfigurasi
 WORKDIR /app/hadoop/etc/hadoop
 COPY ./config/core-site.xml \
     ./config/hdfs-site.xml \
     ./config/mapred-site.xml \
-    ./config/yarn-site.xml \
-    ./config/workers ./
+    ./config/yarn-site.xml ./
 
 FROM eclipse-temurin:8-jdk-jammy as build
 
@@ -33,7 +32,7 @@ COPY --from=initial  /app/run.sh /etc
 
 SHELL ["/bin/bash", "-c"]
 
-# Set the environment variables for Hadoop
+# Set the environment variables
 ENV HADOOP_HOME "/usr/local/hadoop"
 ENV HADOOP_COMMON_HOME $HADOOP_HOME
 ENV HADOOP_HDFS_HOME $HADOOP_HOME
@@ -68,11 +67,8 @@ RUN apt update \
     && chmod +x /etc/run.sh && ln -s /etc/run.sh /usr/bin/bdcluster \
     && chmod 700 /usr/bin/bdcluster \
     && echo 'export PS1="\h:\w# "' >> ~/.bashrc
-# RUN mv hadoop-$HDV /usr/local/hadoop \
-# RUN echo 'export JAVA_HOME=/opt/java/openjdk' >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
 
 WORKDIR /home/hadoop
 RUN mkdir data
-
 # Start the Namenode and Datanode
 CMD service ssh start && sleep infinity
