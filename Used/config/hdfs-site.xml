@@ -2,28 +2,32 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 <configuration>
-    <property>
-        <name>dfs.namenode.name.dir</name>
-        <value>/usr/local/hadoop/data/nameNode</value>
-    </property>
-    <property>
-        <name>dfs.datanode.data.dir</name>
-        <value>/usr/local/hadoop/data/dataNode</value>
-    </property>
-    <property>
-      <name>dfs.namenode.checkpoint.dir</name>
-      <value>/usr/local/hadoop/data/namesecondary</value>
-    </property>
-    <property>
-		<name>dfs.namenode.secondary.http-address</name>
-		<value>datanode1:9868</value>
-	</property>
-    <property>
-		<name>dfs.namenode.http-address</name>
-		<value>0.0.0.0:9870</value>
-	</property>
-    <property>
-        <name>dfs.replication</name>
-        <value>3</value>
-    </property>
+  <property>
+    <name>dfs.permissions</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/usr/local/hadoop/data/nameNode</value>
+  </property>
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/usr/local/hadoop/data/dataNode</value>
+  </property>
+  <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value>/usr/local/hadoop/data/namesecondary</value>
+  </property>
+  <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>datanode1:9868</value>
+  </property>
+    <property>   
+    <name>dfs.datanode.max.transfer.threads</name>   
+    <value>8192</value>    
+  </property>
+  <property>
+    <name>dfs.replication</name>
+    <value>3</value>
+  </property>
 </configuration>
