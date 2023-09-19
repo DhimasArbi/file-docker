@@ -1,7 +1,7 @@
 FROM alpine:latest as initial
 
 ARG TARGETPLATFORM
-ENV HDV=3.2.4
+ENV HDV=3.3.6
 RUN apk update && apk add --no-cache curl
 
 # Download dan ekstrak Hadoop
@@ -10,9 +10,9 @@ RUN if [[ "$TARGETPLATFORM" == "linux/amd64" ]]; then \
         curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV.tar.gz | tar -xz ; \
     fi
         
-# RUN if [[ "$TARGETPLATFORM" == "linux/arm64" ]]; then \
-#         curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
-#     fi
+RUN if [[ "$TARGETPLATFORM" == "linux/arm64" ]]; then \
+        curl https://dlcdn.apache.org/hadoop/common/hadoop-$HDV/hadoop-$HDV-aarch64.tar.gz | tar -xz ; \
+    fi
 RUN mv hadoop-$HDV hadoop \
     && echo 'export JAVA_HOME=/opt/java/openjdk' >> /app/hadoop/etc/hadoop/hadoop-env.sh
 
@@ -23,7 +23,8 @@ WORKDIR /app/hadoop/etc/hadoop
 COPY ./config/core-site.xml \
     ./config/hdfs-site.xml \
     ./config/mapred-site.xml \
-    ./config/yarn-site.xml ./
+    ./config/yarn-site.xml \
+    ./config/workers ./
 
 FROM eclipse-temurin:8-jdk-jammy as build
 
